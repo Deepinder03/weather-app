@@ -11,18 +11,16 @@ export async function GET(request) {
 
   // Decide the API request format based on the provided parameters
   if (address) {
-    url = `https://api.openweathermap.org/data/2.5/weather?q=${address}&appid=c02ceeecd4e685ea17f27d6e09d41e0f`;
+    url = `https://api.openweathermap.org/data/2.5/weather?q=${address}&appid=fa6171513136cc67b183a916fda542d8`;
   } else if (latitude && longitude) {
-    url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=c02ceeecd4e685ea17f27d6e09d41e0f`;
+    url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=fa6171513136cc67b183a916fda542d8`;
   } else {
     // Return error if neither an address nor coordinates are provided
     return new NextResponse(JSON.stringify({ error: "Address or latitude and longitude parameters are missing" }), {
       status: 400,
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, X-Custom-Header'
+        'Access-Control-Allow-Origin': '*'
       }
     });
   }
@@ -34,7 +32,6 @@ export async function GET(request) {
 
   // Create a response object and modify its headers to include CORS headers
   const response = NextResponse.json({ data });
-  response.headers.set('Content-Type', 'application/json');
   response.headers.set('Access-Control-Allow-Origin', '*'); // Allows all domains
   response.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS'); // Specific methods allowed
   response.headers.set('Access-Control-Allow-Headers', 'Content-Type, X-Custom-Header'); // Specifies allowed headers
@@ -46,10 +43,9 @@ export async function GET(request) {
 export function middleware(request) {
   if (request.method === 'OPTIONS') {
     const response = new NextResponse(null, { status: 204 }); // No content for OPTIONS
-    response.headers.set('Content-Type', 'application/json');
     response.headers.set('Access-Control-Allow-Origin', '*');
     response.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, X-Custom-Header');
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, X-Custom-Header'); // Include custom headers if needed
     return response;
   }
   return NextResponse.next();
