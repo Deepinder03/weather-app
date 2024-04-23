@@ -1,20 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import Cors from 'nextjs-cors';
 
-export async function middleware(req, ev) {
-  await Cors(req, ev, {
-    // Options
-    methods: ['GET', 'HEAD', 'OPTIONS'],  // Allowed request methods
-    origin: '*',  // Allow all origins - adjust as necessary for production
-    optionsSuccessStatus: 200  // Some legacy browsers (IE11, various SmartTVs) choke on 204
-  });
-
-  if (req.method === 'OPTIONS') {
-    // Handle OPTIONS Request
-    return new Response('', { status: 204 });
-  }
-}
-
+//localhost:3000/api/weather
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const address = searchParams.get("address");
