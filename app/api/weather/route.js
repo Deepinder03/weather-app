@@ -1,19 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// API endpoint at localhost:3000/api/weather
+// API endpoint
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const address = searchParams.get("address");
   const latitude = searchParams.get("lat");
   const longitude = searchParams.get("lon");
 
-  let url;
+  let baseURL = request.nextUrl.clone();
+  baseURL.pathname = ''; // Clear the path to use the base URL of the host
+
+  let apiURL;
 
   // Decide the API request format based on the provided parameters
   if (address) {
-    url = `https://api.openweathermap.org/data/2.5/weather?q=${address}&appid=fa6171513136cc67b183a916fda542d8`;
+    apiURL = `https://api.openweathermap.org/data/2.5/weather?q=${address}&appid=fa6171513136cc67b183a916fda542d8`;
   } else if (latitude && longitude) {
-    url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=fa6171513136cc67b183a916fda542d8`;
+    apiURL = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=fa6171513136cc67b183a916fda542d8`;
   } else {
     // Return error if neither an address nor coordinates are provided
     return new NextResponse(JSON.stringify({ error: "Address or latitude and longitude parameters are missing" }), {
@@ -25,16 +28,16 @@ export async function GET(request) {
     });
   }
 
-  console.log("Fetching URL:", url);
-  const res = await fetch(url);
+  console.log("Fetching URL:", apiURL);
+  const res = await fetch(apiURL);
 
   const data = await res.json();
 
   // Create a response object and modify its headers to include CORS headers
   const response = NextResponse.json({ data });
-  response.headers.set('Access-Control-Allow-Origin', '*'); // Allows all domains
-  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS'); // Specific methods allowed
-  response.headers.set('Access-Control-Allow-Headers', 'Content-Type, X-Custom-Header'); // Specifies allowed headers
+  response.headers.set('Access-Control-Allow-Origin', '*');
+  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  response.headers.set('Access-Control-Allow-Headers', 'Content-Type, X-Custom-Header');
 
   return response;
 }
@@ -42,10 +45,10 @@ export async function GET(request) {
 // Middleware for handling CORS preflight requests
 export function middleware(request) {
   if (request.method === 'OPTIONS') {
-    const response = new NextResponse(null, { status: 204 }); // No content for OPTIONS
+    const response = new NextResponse(null, { status: 204 });
     response.headers.set('Access-Control-Allow-Origin', '*');
     response.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, X-Custom-Header'); // Include custom headers if needed
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, X-Custom-Header');
     return response;
   }
   return NextResponse.next();
