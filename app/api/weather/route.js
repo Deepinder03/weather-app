@@ -20,7 +20,9 @@ export async function GET(request) {
       status: 400,
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, X-Custom-Header'
       }
     });
   }
@@ -32,6 +34,7 @@ export async function GET(request) {
 
   // Create a response object and modify its headers to include CORS headers
   const response = NextResponse.json({ data });
+  response.headers.set('Content-Type', 'application/json');
   response.headers.set('Access-Control-Allow-Origin', '*'); // Allows all domains
   response.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS'); // Specific methods allowed
   response.headers.set('Access-Control-Allow-Headers', 'Content-Type, X-Custom-Header'); // Specifies allowed headers
@@ -43,9 +46,10 @@ export async function GET(request) {
 export function middleware(request) {
   if (request.method === 'OPTIONS') {
     const response = new NextResponse(null, { status: 204 }); // No content for OPTIONS
+    response.headers.set('Content-Type', 'application/json');
     response.headers.set('Access-Control-Allow-Origin', '*');
     response.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, X-Custom-Header'); // Include custom headers if needed
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, X-Custom-Header');
     return response;
   }
   return NextResponse.next();
