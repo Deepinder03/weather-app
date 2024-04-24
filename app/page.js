@@ -72,7 +72,7 @@ const Home = () => {
             onChange={(e) => setCity(e.target.value)}
           />
           <button className={styles.search_button} type="submit">
-            Seach
+            Search
           </button>
         </form>
         {weatherData && weatherData.weather && weatherData.weather[0] ? (
